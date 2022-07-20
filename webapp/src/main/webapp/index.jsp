@@ -1,2 +1,2 @@
 <h1> Hello, Wilujeung Sumping Resha Yudiatama !!   </h1>
-<h2> Deploying on Progress coy</h2>
+<h2> Deploying on Progresss</h2>
