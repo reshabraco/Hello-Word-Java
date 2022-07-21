@@ -1,5 +1,5 @@
 # Pull base image 
-From tomcat:8-jre8 
+From reshabraco/tomcat:latest
 
 # Maintainer 
 MAINTAINER "resha.braco@gmail.com" 

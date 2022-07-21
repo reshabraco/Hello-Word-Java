@@ -1,0 +1,127 @@
+source git tomcat java
+https://github.com/reshabraco/Hello-Word-Java.git
+
+---DOCKER-JENKINS----
+1. install docker
+#yum install docker
+#systemctl start docker
+#systemctl enable docker
+2. membuat folder untuk volume jenkins
+#mkdir -p /home/jenkinsdata
+#chmod 777 /home/jenkinsdata/
+3. pull dan run jenkins berjalan di port 9090
+#docker container run -d -p 9090:8080 \
+    -v /home/jenkinsdata:/var/jenkins_home \
+    --name jenkins-local \
+    jenkins/jenkins:lts
+4. login admin jenkins
+#docker container exec \
+    [countaineid]  \
+    sh -c "cat /var/jenkins_home/secrets/initialAdminPassword"
+5 install plugin di jenkins
+Dashboard --> managejenkins --> manageplugin --> Availabe
+pilih : github (installwithoutrestart)
+      : maven invoker (installwithoutrestart)
+      : maven integration (installwithoutrestart)
+6. install maven di jenkins docker
+#docker exec -u root -t -i [containerid] bash
+#apt-get update && apt-get install -y maven
+7. a. masukan path maven di jenkins
+Dashboard --> managejenkins --> Global Tool Configuration --> pada bagian maven
+masukan : namamaven
+        : pathmaven (/usr/share/maven)
+   b. masukan ip server di jenkins
+Dashboard --> managejenkins --> Configure System --> pada bagian SSH Servers
+masukan : SSH Server = namahost
+        : Hostname = ipservervm
+        : Username = root
+        : Remote Directory = /home
+        : pada bagian advence, masukan password server --> save
+8. buat job pertama maven
+- create job --> masukan nama project ke 1 --> pilih maven project --> ok
+- pada bagian Source Code Management --> pilih git --> masukan "link github" 
+- pada bagian Build Triggers --> ceklist Pooll SCM --> isikan = * * * * *
+- pada bagian Build --> Goals and options --> ketikan "clean install package" 
+- lalu save
+9. buat job kedua
+- create job --> masukan nama project ke 2 --> pilih freestyle project --> ok
+- pada bagian build --> execute shell -->
+  masukan ssh name server = namahost 
+  masukan Exec command :
+    tagg="$(cd /home/target; git log --oneline | head -n 1 | head -c 4)"
+    cp /home/Dockerfile /home/target
+    cd /home/target; docker build -t [ipservervm]:8123/app-tomcat:$tagg . --> save
+10. buat job ketiga
+- create job --> masukan nama project ke 3 --> pilih freestyle project --> ok
+- pada bagian build --> execute shell -->
+  masukan ssh name server = namahost 
+  masukan Exec command :
+    tagg="$(cd /home/target; git log --oneline | head -n 1 | head -c 4)"
+    docker login -u admin -p cinta123 [ipservervm]:8123
+    docker push [ipservervm]:8123/app-tomcat:$tagg
+11. buat job keempat
+- create job --> masukan nama project ke 4 --> pilih freestyle project --> ok
+- pada bagian build --> execute shell -->
+  masukan ssh name server = namahost 
+  masukan Exec command :
+    tagg="$(cd /home/target; git log --oneline | head -n 1 | head -c 4)"
+    docker stop tomcat-container
+    docker rmi $(docker images | grep 192.168)
+    docker run -d --name tomcat-container --rm -p 8080:8080 [ipservervm]:8123/app-tomcat:$tagg
+
+--DOCKER-NEXUS REPO---
+1. install docker compose
+#sudo curl -L https://github.com/docker/compose/releases/download/1.22.0/docker-compose-$(uname -s)-$(uname -m) -o /usr/local/bin/docker-compose
+#sudo chmod +x /usr/local/bin/docker-compose
+# docker-compose --version
+2. buat nexus menggunakan docker compose
+vim docker-compose.yml
+nexus:
+    image: sonatype/nexus3:latest
+    ports:
+        - "8081:8081"
+        - "8123:8123"
+    volumes:
+        - /some/dir/nexus3/data:/nexus-data
+3. buat directory mouting nexus
+#mkdir -p /some/dir/nexus3/data
+#chown -R 200 /some/dir/nexus3/data
+4. jalankan nexus 
+#docker-compose up -d
+5. login nexus
+user admin
+untuk melihat password bisa pakai command
+docker container exec \
+    [containerid]\
+    sh -c "cat /nexus-data/admin.password"
+6. setting nexus
+https://www.ivankrizsan.se/2016/06/09/create-a-private-docker-registry/ (bisa jadi refrensi)
+7. masukan estiing registry docker client
+vim /etc/docker/daemon.json
+{
+    "insecure-registries" : [ "ipservervm:8123" ]
+}
+#systemctl daemon-reload
+#systemctl restart docker
+8.cek docker registry
+#docker login -u admin -p cinta123 [ipservervm]:8123
+9. buat symlink
+#ln -s /home/jenkinsdata/workspace/[namajobjenkins]/webapp/target /home
+
+---DOCKER-TOMCAT---
+1. pull docker tomcat
+#docker pull reshabraco/tomcat
+2. Buat Dockerfile
+#cd /home/
+#vim Dockerfile
+# Pull base image
+From reshabraco/tomcat:latest
+
+# Maintainer
+MAINTAINER "resha.braco@gmail.com"
+COPY ./webapp.war /usr/local/tomcat/webapps
+
+---TEST---
+1. rubah file dan commit pada git path : https://github.com/reshabraco/Hello-Word-Java/tree/master/webapp/src/main/webapp
+
+
