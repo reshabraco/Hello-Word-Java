@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>ReshaGantengSekali</title>
+    <title>ReshaYudiatama</title>
     <style>
       html, body {
         height: 100%;
@@ -53,8 +53,8 @@
   </head>
   <body>
     <main>
-      <h1>Welcome Resha Yudiatama</h1>
-      <p>Our website is On Progress Deployment</p>
+      <h1>Welcome Home Resha Yudiatama</h1>
+      <p>Our website is On Progress Deployment:P</p>
     </main>
   </body>
 </html>
