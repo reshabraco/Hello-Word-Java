@@ -53,7 +53,7 @@
   </head>
   <body>
     <main>
-      <h1>Welcome Home Resha Yudiatama</h1>
+      <h1>Welcome Home Resha Yudiatama Ganteng</h1>
       <p>Our website is On Progress Deployment:P</p>
     </main>
   </body>
