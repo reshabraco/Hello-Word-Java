@@ -53,8 +53,8 @@
   </head>
   <body>
     <main>
-      <h1>Welcome Home Resha Yudiatama Ganteng</h1>
-      <p>Our website is On Progress Deployment:P</p>
+      <h1>Welcome Home Resha Yudiatama</h1>
+      <p>Our website is On Progress Belajar CI/CD</p>
     </main>
   </body>
 </html>
