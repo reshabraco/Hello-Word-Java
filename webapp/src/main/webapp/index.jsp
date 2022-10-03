@@ -54,7 +54,7 @@
   <body>
     <main>
       <h1>Welcome to Bank Sinarmas</h1>
-      <p>Still Progress Belajar CI/CD</p>
+      <p>Still Progress Belajar CI/CD, Semangat CUY!!</p>
     </main>
   </body>
 </html>
