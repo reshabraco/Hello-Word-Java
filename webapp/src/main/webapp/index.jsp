@@ -54,7 +54,7 @@
   <body>
     <main>
       <h1>Welcome to Bank Sinarmas</h1>
-      <p>Test SNAPSHOT 0.2</p>
+      <p>Test SNAPSHOT 0.3</p>
     </main>
   </body>
 </html>
